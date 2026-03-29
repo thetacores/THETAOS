@@ -1,0 +1,8 @@
+CompileFlags:
+  Add:
+    - -m32
+    - -ffreestanding
+    - -Ikernel/include
+    - -std=c11
+  Remove:
+    - -march=*
