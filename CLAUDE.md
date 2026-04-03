@@ -30,6 +30,10 @@ kernel/
     idt.c / idt.asm  IDT, PIC remap, ISR/IRQ stubs
   drivers/
     vga.c           VGA text-mode driver
+    keyboard.c      PS/2 keyboard driver (IRQ1)
+    timer.c         PIT timer driver (IRQ0)
+  input/
+    input.c         Input event layer (keycodes → events)
   klib/
     kprintf.c       Kernel printf (%d, %x, %s, %c)
     string.c        String utilities

@@ -11,6 +11,7 @@
 #include <cpu/idt.h>
 #include <drivers/keyboard.h>
 #include <drivers/timer.h>
+#include <shell/shell.h>
 
 void kernel_main(uint32_t multiboot_magic, void *mbi)
 {
@@ -26,12 +27,6 @@ void kernel_main(uint32_t multiboot_magic, void *mbi)
 	vga_clear();
 
 	kprintf("KERNEL MAIN LOADED!\n");
-	gdt_debug();
-
-	int time = 0;
-	for(;;)
-	{
-		timer_wait(1000);
-		kprintf("%d\n", time++);
-	}
+	
+	shell();	
 }

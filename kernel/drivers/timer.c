@@ -36,7 +36,7 @@ void timer_irq(void)
 
 void current_ticks(void)
 {
-	kprintf("Ticks = %d\n", ticks);
+	kprintf("\nTicks = %d", ticks);
 }
 
 void timer_wait(uint32_t ms)

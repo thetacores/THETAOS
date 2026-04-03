@@ -20,3 +20,11 @@ void strcpy(char *str1, char *str2)
 	while ((*str1++ = *str2++))
 		;
 }
+
+void memset(void *src, unsigned char val, int size) {
+	unsigned char *s = (unsigned char *)src;
+	int i;
+
+	for (i = 0; i < size; i++)
+		s[i] = val;
+}

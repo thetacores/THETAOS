@@ -26,6 +26,18 @@ static inline int vga_index(uint8_t x, uint8_t y)
 	return y * VGA_WIDTH + x;
 }
 
+static void vga_scroll(void)
+{
+	int x, y;
+
+	for (y = 1; y < VGA_HEIGHT; y++)
+		for (x = 0; x < VGA_WIDTH; x++)
+			VGA[vga_index(x, y - 1)] = VGA[vga_index(x, y)];
+	for (x = 0; x < VGA_WIDTH; x++)
+		VGA[vga_index(x, VGA_HEIGHT - 1)] = vga_entry(' ', color);
+	cursor_y = VGA_HEIGHT - 1;
+}
+
 void vga_setcolor(vga_color_t fg, vga_color_t bg)
 {
 	color = vga_entry_color(fg, bg);
@@ -45,18 +57,6 @@ void vga_clear(void)
 		VGA[i] = vga_entry(' ', color);
 	cursor_x = 0;
 	cursor_y = 0;
-}
-
-static void vga_scroll(void)
-{
-	int x, y;
-
-	for (y = 1; y < VGA_HEIGHT; y++)
-		for (x = 0; x < VGA_WIDTH; x++)
-			VGA[vga_index(x, y - 1)] = VGA[vga_index(x, y)];
-	for (x = 0; x < VGA_WIDTH; x++)
-		VGA[vga_index(x, VGA_HEIGHT - 1)] = vga_entry(' ', color);
-	cursor_y = VGA_HEIGHT - 1;
 }
 
 void vga_putc(char c)
@@ -86,3 +86,26 @@ void vga_write(char *s)
 		s++;
 	}
 }
+
+void vga_backspace(void)
+{
+	if (cursor_x == 0)
+		return;
+	cursor_x--;
+	VGA[vga_index(cursor_x, cursor_y)] = vga_entry(' ', color);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

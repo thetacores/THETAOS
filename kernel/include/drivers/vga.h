@@ -31,5 +31,6 @@ void vga_setcursor(uint8_t x, uint8_t y);
 void vga_clear(void);
 void vga_putc(char c);
 void vga_write(char *s);
+void vga_backspace(void);
 
 #endif
