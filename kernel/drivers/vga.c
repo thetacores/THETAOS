@@ -34,12 +34,21 @@ void vga_clear() {
 	CURSOR_Y = 0;
 }
 
+void vga_scroll() {
+	for (int y = 1; y < VGA_HEIGHT; y++)
+		for (int x = 0; x < VGA_WIDTH; x++)
+			VGA[vga_index(x, y - 1)] = VGA[vga_index(x, y)];
+	for (int x = 0; x < VGA_WIDTH; x++)
+		VGA[vga_index(x, VGA_HEIGHT - 1)] = vga_entry(' ', COLOR);
+	CURSOR_Y = VGA_HEIGHT - 1;
+}
+
 void vga_putc(char c) {
-	if (CURSOR_Y >= VGA_HEIGHT)
-		return;
 	if (c == '\n') {
 		CURSOR_X = 0;
 		CURSOR_Y++;
+		if (CURSOR_Y >= VGA_HEIGHT)
+			vga_scroll();
 		return;
 	}
 	int index = vga_index(CURSOR_X, CURSOR_Y);
@@ -48,6 +57,8 @@ void vga_putc(char c) {
 	if (CURSOR_X >= VGA_WIDTH) {
 		CURSOR_X = 0;
 		CURSOR_Y++;
+		if (CURSOR_Y >= VGA_HEIGHT)
+			vga_scroll();
 	}
 }
 
