@@ -5,6 +5,7 @@ CompileFlags:
     - -I/home/thetacore/Projects/THETAOS/kernel/include
     - -std=c11
     - --target=i686-elf
+    - -xc
   Remove:
     - -march=*
   Compiler: /usr/bin/i686-elf-gcc

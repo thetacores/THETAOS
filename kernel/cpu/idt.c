@@ -5,6 +5,7 @@
 
 #include <cpu/idt.h>
 #include <klib/kprintf.h>
+#include <drivers/timer.h>
 #include <drivers/keyboard.h>
 
 static struct idt_desc idt[256];
@@ -75,6 +76,9 @@ void isr_handler(struct isr_frame *f)
 void irq_handler(struct isr_frame *f)
 {
 	switch (f->int_num) {
+	case 32:					/* IRQ0: timer */
+		timer_irq();
+		break;
 	case 33:					/* IRQ1: keyboard */
 		keyboard_irq();
 		break;

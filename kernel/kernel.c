@@ -10,6 +10,7 @@
 #include <cpu/gdt.h>
 #include <cpu/idt.h>
 #include <drivers/keyboard.h>
+#include <drivers/timer.h>
 
 void kernel_main(uint32_t multiboot_magic, void *mbi)
 {
@@ -18,18 +19,19 @@ void kernel_main(uint32_t multiboot_magic, void *mbi)
 
 	gdt_init();
 	idt_init();
+	timer_init();
 	keyboard_init();
 
 	vga_setcolor(VGA_LIGHT_BROWN, VGA_BLUE);
 	vga_clear();
 
-	kprintf("KERNEL LOADED!\n");
+	kprintf("KERNEL MAIN LOADED!\n");
 	gdt_debug();
 
-	for (;;) {
-		char c = keyboard_getc();
-		if (c)
-			kprintf("%c", c);
-		__asm__ volatile("hlt");
+	int time = 0;
+	for(;;)
+	{
+		timer_wait(1000);
+		kprintf("%d\n", time++);
 	}
 }
