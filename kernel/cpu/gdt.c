@@ -1,10 +1,10 @@
 #include <cpu/gdt.h>
 #include <klib/kprintf.h>
 
-#define GDTBASE 0x00000800
-
 struct gdtr gdtr;
 struct gdt_desc gdt[7];
+
+extern void gdt_flush(uint32_t gdtr_ptr);
 
 void gdt_init() {
     /* Null descriptor */
@@ -23,9 +23,9 @@ void gdt_init() {
     gdt[4] = (struct gdt_desc){ 0xFFFF, 0x0000, 0x00, 0xF2, 0xCF, 0x00 };
 
     gdtr.limit = sizeof(gdt) - 1;
-    gdtr.base  = GDTBASE;
+    gdtr.base  = (uint32_t)gdt;
 
-    __asm__ volatile("lgdt %0" : : "m"(gdtr));
+    gdt_flush((uint32_t)&gdtr);
 }
 
 void gdt_debug() {

@@ -26,6 +26,5 @@ struct isr_frame {
 } __attribute__((packed));
 
 void idt_init(void);
-void idt_debug_listen(void);
 
 #endif

@@ -11,7 +11,7 @@ void kernel_main(uint32_t multiboot_magic, void *mbi)
 	(void)mbi;
 
 	gdt_init();
-	//idt_init();
+	idt_init();
 
 	vga_setcolor(VGA_LIGHT_BROWN, VGA_BLUE);
 	vga_clear();

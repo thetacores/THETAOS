@@ -15,8 +15,8 @@ LDFLAGS := -m32 -ffreestanding -nostdlib \
 BOOT_OBJ := build/boot/boot.o
 KERN_OBJ := build/kernel/kernel.o build/kernel/drivers/vga.o \
             build/kernel/klib/kprintf.o build/kernel/klib/string.o \
-            build/kernel/cpu/gdt.o build/kernel/cpu/idt.o \
-            build/kernel/cpu/idt.asm.o
+            build/kernel/cpu/gdt.o build/kernel/cpu/gdt.asm.o \
+            build/kernel/cpu/idt.o build/kernel/cpu/idt.asm.o
 
 .PHONY: all clean iso run
 
