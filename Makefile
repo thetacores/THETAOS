@@ -1,28 +1,33 @@
-TARGET  := thetaos
-ISO     := $(TARGET).iso
-KERNEL  := build/$(TARGET).elf
+# SPDX-License-Identifier: GPL-2.0
 
-AS      := nasm
-CC      := i686-elf-gcc
-LD      := i686-elf-gcc
+TARGET	:= thetaos
+ISO	:= $(TARGET).iso
+KERNEL	:= build/$(TARGET).elf
 
-ASFLAGS := -f elf32
-CFLAGS  := -m32 -ffreestanding -O2 -Wall -Wextra -std=c11 \
-           -fno-stack-protector -Ikernel/include
-LDFLAGS := -m32 -ffreestanding -nostdlib \
-           -T linker.ld
+AS	:= nasm
+CC	:= i686-elf-gcc
+LD	:= i686-elf-gcc
 
-BOOT_OBJ := build/boot/boot.o
-KERN_OBJ := build/kernel/kernel.o build/kernel/drivers/vga.o \
-            build/kernel/klib/kprintf.o build/kernel/klib/string.o \
-            build/kernel/cpu/gdt.o build/kernel/cpu/gdt.asm.o \
-            build/kernel/cpu/idt.o build/kernel/cpu/idt.asm.o
+ASFLAGS	:= -f elf32
+CFLAGS	:= -m32 -ffreestanding -O2 -Wall -Wextra -std=c11 \
+	   -fno-stack-protector -Ikernel/include
+LDFLAGS	:= -m32 -ffreestanding -nostdlib -T linker.ld
+
+# Auto-discover sources
+BOOT_ASM := $(wildcard boot/*.asm)
+KERN_C   := $(shell find kernel -name '*.c')
+KERN_ASM := $(shell find kernel -name '*.asm')
+
+# Generate object paths under build/
+BOOT_OBJ := $(patsubst %.asm,build/%.o,$(BOOT_ASM))
+KERN_OBJ := $(patsubst kernel/%.c,build/kernel/%.o,$(KERN_C)) \
+	     $(patsubst kernel/%.asm,build/kernel/%.asm.o,$(KERN_ASM))
 
 .PHONY: all clean iso run
 
 all: $(KERNEL)
 
-build/boot/boot.o: boot/boot.asm
+build/boot/%.o: boot/%.asm
 	mkdir -p $(dir $@)
 	$(AS) $(ASFLAGS) $< -o $@
 

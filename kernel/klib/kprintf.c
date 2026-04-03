@@ -1,8 +1,16 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * kprintf.c - Kernel printf implementation
+ *
+ * Supports %d, %x, %s, %c format specifiers.
+ */
+
 #include <klib/kprintf.h>
 #include <drivers/vga.h>
 #include <stdarg.h>
 
-char *itoa(int num) {
+static char *itoa(int num)
+{
 	static char buf[12];
 	int i = 0;
 	int is_negative = 0;
@@ -28,9 +36,12 @@ char *itoa(int num) {
 
 	buf[i] = '\0';
 
+	/* reverse */
 	int left = 0, right = i - 1;
+
 	while (left < right) {
 		char tmp = buf[left];
+
 		buf[left++] = buf[right];
 		buf[right--] = tmp;
 	}
@@ -38,7 +49,8 @@ char *itoa(int num) {
 	return buf;
 }
 
-char *htoa(unsigned int num) {
+static char *htoa(unsigned int num)
+{
 	static char buf[11];
 	const char hex_chars[] = "0123456789ABCDEF";
 	int i = 0;
@@ -56,9 +68,12 @@ char *htoa(unsigned int num) {
 
 	buf[i] = '\0';
 
+	/* reverse */
 	int left = 0, right = i - 1;
+
 	while (left < right) {
 		char tmp = buf[left];
+
 		buf[left++] = buf[right];
 		buf[right--] = tmp;
 	}
@@ -66,37 +81,42 @@ char *htoa(unsigned int num) {
 	return buf;
 }
 
-void kprintf(const char *fmt, ...) {
+void kprintf(const char *fmt, ...)
+{
 	va_list args;
+
 	va_start(args, fmt);
 
 	while (*fmt) {
 		if (*fmt == '%') {
 			fmt++;
 			switch (*fmt) {
-				case 'd': {
-						  char *d = itoa(va_arg(args, int));
-						  vga_write(d);
-						  break;
-					  }
-				case 'c': {
-						  char c = (char)(va_arg(args, int));
-						  vga_putc(c);
-						  break;
-					  }
-				case 's': {
-						  char *s = va_arg(args, char*);
-						  vga_write(s);
-						  break;
-					  }
-				case 'x': {
-						  char *x = htoa(va_arg(args, unsigned int));
-						  vga_write(x);
-						  break;
-					  }
+			case 'd': {
+				char *d = itoa(va_arg(args, int));
+
+				vga_write(d);
+				break;
 			}
-		} 
-		else {
+			case 'c': {
+				char c = (char)(va_arg(args, int));
+
+				vga_putc(c);
+				break;
+			}
+			case 's': {
+				char *s = va_arg(args, char *);
+
+				vga_write(s);
+				break;
+			}
+			case 'x': {
+				char *x = htoa(va_arg(args, unsigned int));
+
+				vga_write(x);
+				break;
+			}
+			}
+		} else {
 			vga_putc(*fmt);
 		}
 		fmt++;
