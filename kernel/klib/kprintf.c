@@ -91,7 +91,6 @@ void kprintf(const char *fmt, ...) {
 					  }
 				case 'x': {
 						  char *x = htoa(va_arg(args, unsigned int));
-						  vga_write("0x");
 						  vga_write(x);
 						  break;
 					  }

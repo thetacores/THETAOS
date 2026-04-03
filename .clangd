@@ -2,7 +2,12 @@ CompileFlags:
   Add:
     - -m32
     - -ffreestanding
-    - -Ikernel/include
+    - -I/home/thetacore/Projects/THETAOS/kernel/include
     - -std=c11
+    - --target=i686-elf
   Remove:
     - -march=*
+  Compiler: /usr/bin/i686-elf-gcc
+
+Diagnostics:
+  UnusedIncludes: None
