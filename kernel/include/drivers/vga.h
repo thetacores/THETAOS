@@ -25,9 +25,10 @@ typedef enum {
     VGA_WHITE = 15,
 } vga_color_t;
 
+void vga_setcolor(vga_color_t fg, vga_color_t bg);
+void vga_setcursor(uint8_t x, uint8_t y);
+void vga_clear();
 void vga_putc(char c);
 void vga_write(char *s);
-void vga_clear();
-void vga_setcolor(vga_color_t fg, vga_color_t bg);
 
 #endif

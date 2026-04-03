@@ -18,6 +18,22 @@ static inline int vga_index(uint8_t x, uint8_t y) {
 	return y * VGA_WIDTH + x; 
 }
 
+void vga_setcolor(vga_color_t fg, vga_color_t bg) {
+	COLOR = vga_entry_color(fg, bg);
+}
+
+void vga_setcursor(uint8_t x, uint8_t y) {
+	CURSOR_X = x;
+	CURSOR_Y = y;
+}
+
+void vga_clear() {
+	for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+		VGA[i] = vga_entry(' ', COLOR);
+	CURSOR_X = 0;
+	CURSOR_Y = 0;
+}
+
 void vga_putc(char c) {
 	if (CURSOR_Y >= VGA_HEIGHT)
 		return;
@@ -35,20 +51,9 @@ void vga_putc(char c) {
 	}
 }
 
-void vga_clear() {
-	for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-		VGA[i] = vga_entry(' ', COLOR);
-	CURSOR_X = 0;
-	CURSOR_Y = 0;
-}
-
 void vga_write(char *s) {
 	while(*s) {
 		vga_putc(*s);
 		s++;
 	}
-}
-
-void vga_setcolor(vga_color_t fg, vga_color_t bg) {
-	COLOR = vga_entry_color(fg, bg);
 }
