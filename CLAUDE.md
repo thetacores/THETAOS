@@ -37,10 +37,35 @@ kernel/
   klib/
     kprintf.c       Kernel printf (%d, %x, %s, %c)
     string.c        String utilities
+    kmalloc.c       Free-list heap allocator (4 MB static heap, 8-byte aligned)
+  shell/
+    shell.c         Interactive shell (prompt, input loop, command dispatch)
   include/          Headers mirroring the above layout
 linker.ld           Linker script
 Makefile            Build system
 ```
+
+## Boot sequence
+
+`kernel_main` runs: `kmalloc_init` → `gdt_init` → `idt_init` → `timer_init` → `keyboard_init` → `shell()`
+
+## Shell
+
+`shell()` runs a blocking read loop via `keyboard_getc()`, parses whitespace-delimited tokens into `argv[]`, and dispatches to `shell_exec()`.
+
+Built-in commands: `help`, `clear`, `credit`, `echo`, `poweroff`, `reboot`
+
+- `poweroff` — QEMU ACPI shutdown via port 0x604 (fallback 0xB004)
+- `reboot` — keyboard controller reset (port 0x64 / 0xFE), triple-fault fallback
+
+## Memory allocator
+
+`kmalloc` / `kfree` use a free-list allocator over a static 4 MB heap (`heap[]` in `kmalloc.c`).
+
+- Allocations are 8-byte aligned; each block is preceded by a `block_t` header.
+- `kfree` coalesces adjacent free blocks.
+- `kdebug()` dumps the block list via `kprintf`.
+- Call `kmalloc_init()` before any other subsystem that may allocate.
 
 ## Conventions
 

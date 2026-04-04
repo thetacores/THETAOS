@@ -35,11 +35,34 @@ void shell_help(void)
 {
 	kprintf("THETAOS Shell Commands:\n");
 	kprintf("  help     - Show this help message\n");
-	kprintf("  shutdown - Power off the system\n");
+	kprintf("  clear    - Clear the screen\n");
+	kprintf("  credit   - Show the credit\n");
+	kprintf("  echo     - Print arguments to the screen\n");
+	kprintf("  poweroff - Power off the system\n");
 	kprintf("  reboot   - Restart the system\n");
 }
 
-void shell_shutdown(void)
+void shell_clear(void)
+{
+	vga_clear();
+}
+
+void shell_credit(void)
+{
+	kprintf("THETAOS - A 32-bit x86 Operating System\n");
+	kprintf("Built by thetacores\n");
+	kprintf("Toolchain: nasm, i686-elf-gcc, GRUB/Multiboot2\n");
+}
+
+void shell_echo(int argc, char *argv[])
+{
+	for (int i = 1; i < argc; i++) 
+		kprintf("%s ", argv[i]);
+	kprintf("\n");
+}
+
+
+void shell_poweroff(void)
 {
 	/* QEMU ACPI shutdown */
 	__asm__ volatile ("outw %0, %1" : : "a"((uint16_t)0x2000), "Nd"((uint16_t)0x604));
@@ -58,7 +81,10 @@ void shell_reboot(void)
 void shell_exec(int argc, char *argv[])
 {
 	if (!strcmp(argv[0], "help")) shell_help();
-	else if (!strcmp(argv[0], "shutdown")) shell_shutdown();
+	else if (!strcmp(argv[0], "clear")) shell_clear();
+	else if (!strcmp(argv[0], "credit")) shell_credit();
+	else if (!strcmp(argv[0], "echo")) shell_echo(argc, argv);
+	else if (!strcmp(argv[0], "poweroff")) shell_poweroff();
 	else if (!strcmp(argv[0], "reboot")) shell_reboot();
 	else kprintf("%s: Command not found.\n", argv[0]);
 }

@@ -12,12 +12,14 @@
 #include <drivers/keyboard.h>
 #include <drivers/timer.h>
 #include <shell/shell.h>
+#include <klib/kmalloc.h>
 
 void kernel_main(uint32_t multiboot_magic, void *mbi)
 {
 	(void)multiboot_magic;
 	(void)mbi;
 
+	kmalloc_init();
 	gdt_init();
 	idt_init();
 	timer_init();
