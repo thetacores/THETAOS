@@ -27,6 +27,6 @@ void kernel_main(uint32_t multiboot_magic, void *mbi)
 	vga_clear();
 
 	kprintf("KERNEL MAIN LOADED!\n");
-	
+
 	shell();	
 }

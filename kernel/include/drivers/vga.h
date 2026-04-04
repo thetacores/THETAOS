@@ -32,5 +32,6 @@ void vga_clear(void);
 void vga_putc(char c);
 void vga_write(char *s);
 void vga_backspace(void);
+void vga_disable_cursor(void);
 
 #endif

@@ -5,11 +5,19 @@
 
 #include <drivers/vga.h>
 
+#define VGA_CTRL 0x3D4                                  
+#define VGA_DATA 0x3D5
+
 volatile uint16_t *VGA = (volatile uint16_t *)0xB8000;
 
 static uint8_t cursor_x;
 static uint8_t cursor_y;
 static uint8_t color = 0x0F;
+
+static inline void outb(uint16_t port, uint8_t val) 
+{
+	__asm__ volatile ("outb %0, %1" : : "a"(val), "Nd"(port));                                            
+}
 
 static inline uint8_t vga_entry_color(vga_color_t fg, vga_color_t bg)
 {
@@ -24,6 +32,16 @@ static inline uint16_t vga_entry(char c, uint8_t col)
 static inline int vga_index(uint8_t x, uint8_t y)
 {
 	return y * VGA_WIDTH + x;
+}
+
+void vga_hwcursor(int x, int y)
+{
+	uint16_t pos = y * VGA_WIDTH + x;
+
+	outb(VGA_CTRL, 0x0F);
+	outb(VGA_DATA, (uint8_t)(pos & 0xFF));
+	outb(VGA_CTRL, 0x0E);
+	outb(VGA_DATA, (uint8_t)((pos >> 8) & 0xFF));
 }
 
 static void vga_scroll(void)
@@ -47,6 +65,7 @@ void vga_setcursor(uint8_t x, uint8_t y)
 {
 	cursor_x = x;
 	cursor_y = y;
+	vga_hwcursor(x, y);
 }
 
 void vga_clear(void)
@@ -57,6 +76,7 @@ void vga_clear(void)
 		VGA[i] = vga_entry(' ', color);
 	cursor_x = 0;
 	cursor_y = 0;
+	vga_hwcursor(cursor_x, cursor_y);
 }
 
 void vga_putc(char c)
@@ -66,6 +86,7 @@ void vga_putc(char c)
 		cursor_y++;
 		if (cursor_y >= VGA_HEIGHT)
 			vga_scroll();
+		vga_hwcursor(cursor_x, cursor_y);
 		return;
 	}
 
@@ -77,6 +98,7 @@ void vga_putc(char c)
 		if (cursor_y >= VGA_HEIGHT)
 			vga_scroll();
 	}
+	vga_hwcursor(cursor_x, cursor_y);
 }
 
 void vga_write(char *s)
@@ -93,19 +115,5 @@ void vga_backspace(void)
 		return;
 	cursor_x--;
 	VGA[vga_index(cursor_x, cursor_y)] = vga_entry(' ', color);
+	vga_hwcursor(cursor_x, cursor_y);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
