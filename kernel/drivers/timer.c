@@ -4,6 +4,7 @@
  */
 
 #include <drivers/timer.h>
+#include <cpu/io.h>
 #include <klib/kprintf.h>
 
 #include <stdint.h>
@@ -15,11 +16,6 @@
 
 volatile uint32_t ticks = 0;
 
-static inline void outb(uint16_t port, uint8_t val)
-{
-	__asm__ volatile("outb %0, %1" : : "a"(val), "Nd"(port));
-}
-
 void timer_init(void)
 {
 	uint16_t divisor = PIT_BASE_FREQ / TICKS_PER_SECOND;
@@ -27,6 +23,7 @@ void timer_init(void)
 	outb(PIT_CMD, 0x36);			/* channel 0, lo/hi, rate generator */
 	outb(PIT_CHANNEL0, (uint8_t)(divisor & 0xFF));
 	outb(PIT_CHANNEL0, (uint8_t)((divisor >> 8) & 0xFF));
+	kprintf("[PIT] timer initialized at %d Hz\n", TICKS_PER_SECOND);
 }
 
 void timer_irq(void)

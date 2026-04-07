@@ -4,12 +4,15 @@
  */
 
 #include <shell/shell.h>
+#include <cpu/io.h>
 #include <klib/kprintf.h>
 #include <klib/string.h>
 #include <drivers/keyboard.h>
 #include <drivers/vga.h>
+#include <drivers/ata.h>
 
-int arg_count(char *buffer) {
+int arg_count(char *buffer)
+{
 	int count = 0;
 	int in_word = 0;
 	while (*buffer) {
@@ -65,15 +68,15 @@ void shell_echo(int argc, char *argv[])
 void shell_poweroff(void)
 {
 	/* QEMU ACPI shutdown */
-	__asm__ volatile ("outw %0, %1" : : "a"((uint16_t)0x2000), "Nd"((uint16_t)0x604));
+	outw(0x604, 0x2000);
 	/* Fallback: QEMU older port */
-	__asm__ volatile ("outw %0, %1" : : "a"((uint16_t)0x2000), "Nd"((uint16_t)0xB004));
+	outw(0xB004, 0x2000);
 }
 
 void shell_reboot(void)
 {
 	/* Pulse keyboard controller reset line */
-	__asm__ volatile ("outb %0, %1" : : "a"((uint8_t)0xFE), "Nd"((uint16_t)0x64));
+	outb(0x64, 0xFE);
 	/* Triple fault fallback */
 	__asm__ volatile ("int $0x00");
 }
@@ -86,6 +89,13 @@ void shell_exec(int argc, char *argv[])
 	else if (!strcmp(argv[0], "echo")) shell_echo(argc, argv);
 	else if (!strcmp(argv[0], "poweroff")) shell_poweroff();
 	else if (!strcmp(argv[0], "reboot")) shell_reboot();
+	
+	/*ATA DEBUG*/
+	/*
+	else if (!strcmp(argv[0], "write")) shell_ata_write(argc, argv);
+	else if (!strcmp(argv[0], "read")) shell_ata_read(argc, argv);
+	*/
+
 	else kprintf("%s: Command not found.\n", argv[0]);
 }
 

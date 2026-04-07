@@ -32,6 +32,7 @@ void gdt_init(void)
 	gdtr.base  = (uint32_t)gdt;
 
 	gdt_flush((uint32_t)&gdtr);
+	kprintf("[GDT] GDT initialized\n");
 }
 
 void gdt_debug(void)

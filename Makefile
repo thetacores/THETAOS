@@ -49,8 +49,13 @@ iso: $(KERNEL)
 	cp boot/grub.cfg build/iso/boot/grub/grub.cfg
 	grub-mkrescue -o $(ISO) build/iso
 
-run: iso
-	qemu-system-i386 -cdrom $(ISO) -display gtk
+disk.img:
+	dd if=/dev/zero of=disk.img bs=512 count=2048
+
+run: iso disk.img
+	qemu-system-i386 -cdrom $(ISO) \
+		-drive file=disk.img,format=raw,if=ide,index=0 \
+		-display gtk
 
 clean:
-	rm -rf build $(ISO)
+	rm -rf build $(ISO) disk.img

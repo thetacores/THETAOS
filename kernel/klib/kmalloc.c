@@ -37,6 +37,7 @@ void kmalloc_init(void)
 	head->size  = HEAP_SIZE - HEADER_SIZE;
 	head->free  = 1;
 	head->next  = NULL;
+	kprintf("[HEAP] heap allocator initialized (4 MB)\n");
 }
 
 void *kmalloc(size_t size)

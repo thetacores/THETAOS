@@ -4,25 +4,13 @@
  */
 
 #include <cpu/idt.h>
+#include <cpu/io.h>
 #include <klib/kprintf.h>
 #include <drivers/timer.h>
 #include <drivers/keyboard.h>
 
 static struct idt_desc idt[256];
 static struct idtr     idtr;
-
-/* I/O helpers */
-static inline void outb(uint16_t port, uint8_t val)
-{
-	__asm__ volatile("outb %0, %1" : : "a"(val), "Nd"(port));
-}
-
-static inline uint8_t inb(uint16_t port)
-{
-	uint8_t ret;
-	__asm__ volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
-	return ret;
-}
 
 static inline void io_wait(void)
 {
@@ -145,4 +133,5 @@ void idt_init(void)
 	idtr.base  = (uint32_t)idt;
 	__asm__ volatile("lidt %0" : : "m"(idtr));
 	__asm__ volatile("sti");
+	kprintf("[IDT] IDT + PIC initialized\n");
 }

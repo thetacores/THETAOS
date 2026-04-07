@@ -4,8 +4,9 @@
  */
 
 #include <drivers/vga.h>
+#include <cpu/io.h>
 
-#define VGA_CTRL 0x3D4                                  
+#define VGA_CTRL 0x3D4
 #define VGA_DATA 0x3D5
 
 volatile uint16_t *VGA = (volatile uint16_t *)0xB8000;
@@ -13,11 +14,6 @@ volatile uint16_t *VGA = (volatile uint16_t *)0xB8000;
 static uint8_t cursor_x;
 static uint8_t cursor_y;
 static uint8_t color = 0x0F;
-
-static inline void outb(uint16_t port, uint8_t val) 
-{
-	__asm__ volatile ("outb %0, %1" : : "a"(val), "Nd"(port));                                            
-}
 
 static inline uint8_t vga_entry_color(vga_color_t fg, vga_color_t bg)
 {

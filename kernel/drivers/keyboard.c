@@ -8,14 +8,8 @@
  */
 
 #include <drivers/keyboard.h>
+#include <cpu/io.h>
 #include <klib/kprintf.h>
-
-static inline uint8_t inb(uint16_t port)
-{
-	uint8_t ret;
-	__asm__ volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
-	return ret;
-}
 
 /*
  * Scan-code set 1 -> keycode translation table.
